@@ -8,12 +8,93 @@
     <artifactId>timely-cli</artifactId>
     <version>1.0-SNAPSHOT</version>
 
+    <name>Timely CLI</name>
+    <description>Консольный тайм-трекер</description>
+
     <properties>
         <java.version>25</java.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+        <picocli.version>4.7.7</picocli.version>
+        <junit.version>6.0.2</junit.version>
+        <assertj.version>3.27.7</assertj.version>
+        <mockito.version>5.21.0</mockito.version>
     </properties>
+
+    <dependencies>
+        <dependency> <!-- CLI парсинг -->
+            <groupId>info.picocli</groupId>
+            <artifactId>picocli</artifactId>
+            <version>${picocli.version}</version>
+        </dependency>
+
+        <!-- Тесты -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <version>${assertj.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>${mockito.version}</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <!-- Для picocli annotation processing. Генерирует метаданные для GraalVM native image.
+                 Есть мысль использовать graal для сборки, чтоб тулза работала у юзеров без java.
+                 Понятно, что у нас юзеров не будет, но просто для законченности продукта -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.15.0</version>
+                <configuration>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>info.picocli</groupId>
+                            <artifactId>picocli-codegen</artifactId>
+                            <version>${picocli.version}</version>
+                        </path>
+                    </annotationProcessorPaths>
+                </configuration>
+            </plugin>
+
+            <!-- Прописывает Main в MANIFEST.MF, чтобы писать 'java -jar timely.jar [command]'
+                 вместо 'java -cp timely.jar com.efedorchenko.timely.Main [command]' -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.5.0</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <mainClass>com.efedorchenko.timely.Main</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+
+            <!-- Запуск тестов. Maven использует его по умолчанию. Без указания плагина по
+                 умолчанию подтягивается старая версия, а для JUnit 5 лучше указать свежую -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.5.4</version>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
