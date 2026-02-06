@@ -16,6 +16,11 @@ import static java.lang.IO.println;
 /**
  * Интерактивный CLI для dev-режима
  * REPL: читает команды из stdin, отправляет в daemon, выводит результат
+ *
+ * Не покрыт тестами, тк это dev-инструмент, а не production код.
+ * Для тестирования надо было быинжектить вывод (статический println),
+ * что избыточно для dev-режима. Тем более, что омпоненты (DaemonClient,
+ * DaemonServer, Protocol) протестированы отдельно
  */
 public final class InteractiveCli {
 
@@ -95,17 +100,20 @@ public final class InteractiveCli {
         println("Starting daemon...");
 
         var tracker = new Tracker();
-        ownDaemon = new DaemonServer(tracker);
+        var daemon = new DaemonServer(tracker);
 
         /* Так как в cli-режиме (типа dev), то стартуем daemon автоматически и немного ждем,
            пока поднимется. В prod-режиме это отдельный процесс на запуск, см. Main.run() */
         Thread.startVirtualThread(() -> {
             try {
-                ownDaemon.start();
+                daemon.start();
             } catch (IOException e) {
                 println("ERROR: Daemon starting failed: " + e.getMessage());
             }
         });
+
+        // Присваиваем в поле тут. Иначе теоретически exit() может вызваться до присвоения ownDaemon
+        ownDaemon = daemon;
 
         for (int i = 0; i < 20; i++) {
             if (client.isDaemonRunning()) {
