@@ -3,10 +3,8 @@ package com.efedorchenko.timely.tracker;
 import java.time.Clock;
 import java.time.Duration;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 /**
  * Реализация тайм-трекера. Хранит сессии в памяти.
@@ -51,21 +49,6 @@ public final class Tracker implements TimeTracker {
         currentSession = null;
         return completed;
     }
-
-//    @Override
-//    public Optional<TimeSession.Active> currentSession() {
-//        return Optional.ofNullable(currentSession);
-//    }
-//
-//    @Override
-//    public List<TimeSession.Completed> completedSessions() {
-//        return Collections.unmodifiableList(completedSessions);
-//    }
-//
-//    @Override
-//    public boolean isRunning() {
-//        return currentSession != null;
-//    }
 
     @Override
     public Duration totalCompletedTime() {

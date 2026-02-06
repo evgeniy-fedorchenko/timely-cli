@@ -12,10 +12,6 @@ public interface TimeTracker {
     TimeSession.Active start();
     TimeSession.Completed stop();
 
-//    Optional<TimeSession.Active> currentSession();
-//    List<TimeSession.Completed> completedSessions();
-//    boolean isRunning();
-
     Duration totalCompletedTime();
     Duration currentSessionDuration();
     Duration totalTime();
