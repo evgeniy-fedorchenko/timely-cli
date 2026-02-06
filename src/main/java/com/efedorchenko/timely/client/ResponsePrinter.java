@@ -39,10 +39,17 @@ public final class ResponsePrinter {
             return;
         }
         if (status.running()) {
-            println(DurationFormatter.format(status.currentSec()) + " (running)");
+            println("Running session:" + DurationFormatter.format(status.currentSec()));
         }
 
-        println("Total: " + DurationFormatter.format(status.totalSec()));
+        StringBuilder sb = new StringBuilder("Total ");
+        if (status.running()) {
+            sb.append("(include running): ");
+        } else {
+            sb.append(": ");
+        }
+        sb.append(DurationFormatter.format(status.totalSec()));
+        println(sb.toString());
     }
 
     public static void printVersion() {
@@ -59,7 +66,7 @@ public final class ResponsePrinter {
             start   - %s
             stop    - %s
             status  - %s
-            ping    - Check daemon running
+            ping    - Check daemon running. Daemon should respond with 'pong'
             """.formatted(
                 StartCommand.DESCRIPTION,
                 StopCommand.DESCRIPTION,

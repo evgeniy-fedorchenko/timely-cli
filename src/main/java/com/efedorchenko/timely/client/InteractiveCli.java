@@ -150,7 +150,7 @@ public final class InteractiveCli {
             if (status == null) return;
 
             if (status.running()) {
-                println("Timer was running: " + status.currentSec());
+                println("Timer was running: " + DurationFormatter.format(status.currentSec()));
             }
             if (status.totalSec() > 0) {
                 println("Total: " + DurationFormatter.format(status.totalSec()));
