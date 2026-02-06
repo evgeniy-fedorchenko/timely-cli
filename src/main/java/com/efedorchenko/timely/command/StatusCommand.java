@@ -12,9 +12,11 @@ import static java.lang.IO.println;
 
 @Command(
         name = "status",
-        description = "Show tracked time"
+        description = StatusCommand.DESCRIPTION
 )
 public class StatusCommand implements Runnable {
+
+    public static final String DESCRIPTION = "Show current session and total tracked time";
 
     @Override
     public void run() {

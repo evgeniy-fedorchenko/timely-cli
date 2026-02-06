@@ -2,6 +2,9 @@ package com.efedorchenko.timely.client;
 
 
 import com.efedorchenko.timely.AppProperties;
+import com.efedorchenko.timely.command.StartCommand;
+import com.efedorchenko.timely.command.StatusCommand;
+import com.efedorchenko.timely.command.StopCommand;
 import com.efedorchenko.timely.format.DurationFormatter;
 import com.efedorchenko.timely.protocol.Protocol;
 
@@ -53,11 +56,15 @@ public final class ResponsePrinter {
     // TODO 05.02.2026 20:39: проверить, как справляется с другими командами
     public static void printHelp() {
         println("""
-            start   - Start timer
-            stop    - Stop timer
-            status  - Show tracked time
-            ping    - Check daemon
-            """);
+            start   - %s
+            stop    - %s
+            status  - %s
+            ping    - Check daemon running
+            """.formatted(
+                StartCommand.DESCRIPTION,
+                StopCommand.DESCRIPTION,
+                StatusCommand.DESCRIPTION
+        ));
     }
 
 }

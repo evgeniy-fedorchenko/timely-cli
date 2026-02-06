@@ -12,9 +12,11 @@ import static java.lang.IO.println;
 
 @Command(
         name = "shutdown",
-        description = "Stop the daemon"
+        description = ShutdownCommand.DESCRIPTION
 )
 public class ShutdownCommand implements Runnable {
+
+    public static final String DESCRIPTION = "Stop the daemon and save session data (not impl, only show)";
 
     @Override
     public void run() {

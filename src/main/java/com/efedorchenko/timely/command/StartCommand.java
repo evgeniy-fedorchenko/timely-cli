@@ -12,9 +12,11 @@ import static java.lang.IO.println;
 
 @Command(
         name = "start",
-        description = "Start timer for a project"
+        description = StartCommand.DESCRIPTION
 )
 public class StartCommand implements Runnable {
+
+    public static final String DESCRIPTION = "Start tracking time. Use 'stop' to finish the session";
 
     @Override
     public void run() {

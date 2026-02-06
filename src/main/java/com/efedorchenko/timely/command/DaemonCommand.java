@@ -11,9 +11,11 @@ import static java.lang.IO.println;
 
 @Command(
         name = "daemon",
-        description = "Start background daemon process"
+        description = DaemonCommand.DESCRIPTION
 )
 public class DaemonCommand implements Runnable {
+
+    public static final String DESCRIPTION = "Start background daemon process for time tracking";
 
     @Override
     public void run() {

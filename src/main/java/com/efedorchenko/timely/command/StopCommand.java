@@ -13,9 +13,11 @@ import static java.lang.IO.println;
 
 @Command(
         name = "stop",
-        description = "Stop running timer"
+        description = StopCommand.DESCRIPTION
 )
 public class StopCommand implements Runnable {
+
+    public static final String DESCRIPTION = "Stop tracking and save the session. Shows elapsed time";
 
     @Override
     public void run() {
