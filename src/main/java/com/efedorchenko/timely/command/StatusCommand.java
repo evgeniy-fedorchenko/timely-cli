@@ -18,11 +18,23 @@ public class StatusCommand implements Runnable {
 
     public static final String DESCRIPTION = "Show current session and total tracked time";
 
+    private final DaemonClient client;
+
+    /** Конструктор без аргументов, например для picocly или просто для удобства */
+    public StatusCommand() {
+        this(new DaemonClient());
+    }
+
+    /** Для переопределения, например в тестах */
+    StatusCommand(DaemonClient client) {
+        this.client = client;
+    }
+
     @Override
     public void run() {
 
         try {
-            var response = new DaemonClient().send(Protocol.CMD_STATUS);
+            var response = client.send(Protocol.CMD_STATUS);
             ResponsePrinter.printStatus(response);
 
         } catch (IOException e) {  // В том числе DaemonNotRunningException

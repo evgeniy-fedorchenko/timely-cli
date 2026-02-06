@@ -19,9 +19,20 @@ public class StopCommand implements Runnable {
 
     public static final String DESCRIPTION = "Stop tracking and save the session. Shows elapsed time";
 
+    private final DaemonClient client;
+
+    /** Конструктор без аргументов, например для picocly или просто для удобства */
+    public StopCommand() {
+        this(new DaemonClient());
+    }
+
+    /** Для переопределения, например в тестах */
+    StopCommand(DaemonClient client) {
+        this.client = client;
+    }
+
     @Override
     public void run() {
-        var client = new DaemonClient();
 
         try {
             var response = client.send(Protocol.CMD_STOP);
