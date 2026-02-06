@@ -1,6 +1,7 @@
 package com.efedorchenko.timely.format;
 
 import java.time.Duration;
+import java.util.Objects;
 
 /**
  * Форматирует длительность в вид "1h 2min 3sec".
@@ -11,6 +12,7 @@ public final class DurationFormatter {
     private DurationFormatter() {}
 
     public static String format(Duration duration) {
+        Objects.requireNonNull(duration, "duration must not be null");
         return format(duration.toSeconds());
     }
 
