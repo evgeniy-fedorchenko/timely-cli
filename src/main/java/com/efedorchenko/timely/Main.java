@@ -8,7 +8,7 @@ import picocli.CommandLine;
  * Точка входа. Делегирует всё picocli
  */
 @CommandLine.Command(
-        name = "Timely CLI",
+        name = "timely",
         description = "Console time tracker",
         mixinStandardHelpOptions = true,  // Авто --help и --version
         versionProvider = VersionProvider.class,
