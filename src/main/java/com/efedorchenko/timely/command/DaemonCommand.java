@@ -36,6 +36,10 @@ import static java.lang.IO.println;
  *
  * В dev-режиме (timely --dev) эта команда не используется -
  * там InteractiveCli сам запускает daemon в виртуальном потоке.
+ *
+ * Не покрыт unit-тестами — зависит от ProcessBuilder и fork процесса.
+ * Компоненты (DaemonServer, DaemonClient, Tracker) протестированы отдельно.
+ * Да и просто ProcessBuilder, ShutdownHook и тд тестить - быстрее с ума сойти
  */
 @Command(name = "daemon", description = DaemonCommand.DESCRIPTION)
 public class DaemonCommand implements Runnable {
@@ -85,6 +89,8 @@ public class DaemonCommand implements Runnable {
             } else {
                 println("ERROR: Daemon failed to start");
             }
+        } catch (InterruptedException _) {
+            Thread.currentThread().interrupt();
         } catch (Exception e) {
             println("ERROR: " + e.getMessage());
         }
