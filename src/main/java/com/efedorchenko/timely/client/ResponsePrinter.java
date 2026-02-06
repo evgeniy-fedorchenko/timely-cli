@@ -14,6 +14,18 @@ public final class ResponsePrinter {
 
     private ResponsePrinter() { }
 
+    public static void printResponse(String command, String response) {
+        var type = Protocol.commandType(command);
+
+        switch (type) {
+            case Protocol.CMD_START -> ResponsePrinter.printStartResult(response);
+            case Protocol.CMD_STOP -> ResponsePrinter.printStopResult(response);
+            case Protocol.CMD_STATUS -> ResponsePrinter.printStatus(response);
+            case Protocol.CMD_PING -> println("pong");
+            default -> println(response);
+        }
+    }
+
     public static void printStartResult(String response) {
         if (Protocol.isOk(response)) {
             println("Timer started");
@@ -38,8 +50,10 @@ public final class ResponsePrinter {
             println("ERROR: Invalid response: " + response);
             return;
         }
+
+        println("State: " + (status.running() ? "running" : "not running"));
         if (status.running()) {
-            println("Running session:" + DurationFormatter.format(status.currentSec()));
+            println("Running session: " + DurationFormatter.format(status.currentSec()));
         }
 
         StringBuilder sb = new StringBuilder("Total ");

@@ -20,21 +20,24 @@ import static java.lang.IO.println;
 public final class InteractiveCli {
 
     private static final Set<String> KNOWN_COMMANDS = Set.of(
-            Protocol.CMD_START,
-            Protocol.CMD_STOP,
-            Protocol.CMD_STATUS,
-            Protocol.CMD_PING
+            Protocol.CMD_START, Protocol.CMD_STOP, Protocol.CMD_STATUS, Protocol.CMD_PING
 //            Еще exit, но это команда cli-режима, а не общения с демоном, как собственно help/version
     );
 
     private static final String WELCOME_MESS = """
-        
-        Welcome to Timely CLI v%s — time tracker
+        \nWelcome to Timely CLI v%s — time tracker
         Type 'help' for commands, 'exit' to quit
-        
         """.formatted(AppProperties.version());
 
     private final DaemonClient client;
+
+    /* Сохраняем ссылку на демона, которого запустили сами. Если найден
+       уже работающий демон - не сохраняем. Это нужно, чтобы при exit
+       вырубить своего демона, только если мы сами его запустили */
+    private DaemonServer ownDaemon;
+
+    /** Флаг для предотвращения повторного вызова exit() из shutdown hook */
+    private volatile boolean exited = false;
 
     public InteractiveCli() {
         this(new DaemonClient());
@@ -52,10 +55,18 @@ public final class InteractiveCli {
             println("ERROR: Failed to start daemon");
             return;
         }
+
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            println();
+            exit();
+        }));
+
         println(WELCOME_MESS);
-
         var scanner = new Scanner(System.in);
+        this.run(scanner);
+    }
 
+    private void run(Scanner scanner) {
         while (true) {
             print("> ");
 
@@ -84,13 +95,13 @@ public final class InteractiveCli {
         println("Starting daemon...");
 
         var tracker = new Tracker();
-        var daemon = new DaemonServer(tracker);
+        ownDaemon = new DaemonServer(tracker);
 
         /* Так как в cli-режиме (типа dev), то стартуем daemon автоматически и немного ждем,
            пока поднимется. В prod-режиме это отдельный процесс на запуск, см. Main.run() */
         Thread.startVirtualThread(() -> {
             try {
-                daemon.start();
+                ownDaemon.start();
             } catch (IOException e) {
                 println("ERROR: Daemon starting failed: " + e.getMessage());
             }
@@ -104,13 +115,12 @@ public final class InteractiveCli {
             try {
                 Thread.sleep(50);
             } catch (InterruptedException _) {
-                // Прерывание при ожидании — выходим из цикла
-                break;
+                break;  // Прерывание при ожидании — выходим из цикла
             }
         }
-
         return false;
     }
+
     private void executeCommand(String command) {
         var type = Protocol.commandType(command);
 
@@ -118,32 +128,27 @@ public final class InteractiveCli {
             println("ERROR: Unknown command: " + type + ". Type 'help' for available commands.");
             return;
         }
-
         try {
             var response = client.send(command);
-            printResponse(command, response);
-        } catch (DaemonNotRunningException e) {
-            println(e.getMessage());
-        } catch (IOException e) {
+            ResponsePrinter.printResponse(command, response);
+
+        } catch (IOException e) {  // В том числе DaemonNotRunningException
             println("Error: " + e.getMessage());
         }
     }
 
-    private void printResponse(String command, String response) {
-        var type = Protocol.commandType(command);
-
-        switch (type) {
-            case Protocol.CMD_START -> ResponsePrinter.printStartResult(response);
-            case Protocol.CMD_STOP -> ResponsePrinter.printStopResult(response);
-            case Protocol.CMD_STATUS -> ResponsePrinter.printStatus(response);
-            case Protocol.CMD_PING -> println("pong");
-            default -> println(response);
-        }
-    }
-
-
     /** Сначала получаем статус, чтоб показать, что получилось по итогу, потом останавливаемся */
     private void exit() {
+        if (exited) return;
+        exited = true;
+
+        try {
+            var stopResponse = client.send(Protocol.CMD_STOP);
+            if (Protocol.isOk(stopResponse)) {
+                ResponsePrinter.printStopResult(stopResponse);
+            }
+        } catch (IOException _) { }  // Daemon недоступен — выходим так
+
         try {
             var response = client.send(Protocol.CMD_STATUS);
             var status = Protocol.parseStatus(response);
@@ -155,15 +160,15 @@ public final class InteractiveCli {
             if (status.totalSec() > 0) {
                 println("Total: " + DurationFormatter.format(status.totalSec()));
             }
-        } catch (IOException _) {
-            // Daemon недоступен — выходим без статистики
+
+        } catch (IOException _) { }  // Daemon недоступен — выходим без статистики
+
+        if (ownDaemon != null) {
+            try {
+                client.send(Protocol.CMD_SHUTDOWN);
+            } catch (IOException _) { }  // Daemon уже мёртв или недоступен — ок, всё равно выходим
         }
 
-        try {
-            client.send(Protocol.CMD_SHUTDOWN);
-            println("Bye!");
-        } catch (IOException _) {
-            // Daemon уже мёртв или недоступен — ок, всё равно выходим
-        }
+        println("Bye!");
     }
 }
