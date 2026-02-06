@@ -63,7 +63,7 @@ public final class DaemonServer {
     }
 
     /** Останавливает сервер. Можно вызывать из любого потока. */
-    private void stop() {
+    public void stop() {
         running = false;
         try {
             if (serverSocket != null && !serverSocket.isClosed()) {

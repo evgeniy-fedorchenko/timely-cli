@@ -123,4 +123,38 @@
         </resources>
     </build>
 
+    <profiles>
+        <!-- Сборка native image через GraalVM. Запуск: mvn package -Pnative
+             Результат: target/timely — исполняемый файл без зависимости
+             от JVM. Это аля production-вариант для законченности продукта -->
+        <profile>
+            <id>native</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.graalvm.buildtools</groupId>
+                        <artifactId>native-maven-plugin</artifactId>
+                        <version>0.11.4</version>
+                        <executions>
+                            <execution>
+                                <id>build-native</id>
+                                <goals>
+                                    <goal>compile-no-fork</goal>
+                                </goals>
+                                <phase>package</phase>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <mainClass>com.efedorchenko.timely.Main</mainClass>
+                            <imageName>timely</imageName>
+                            <buildArgs>
+                                <buildArg>--no-fallback</buildArg>
+                            </buildArgs>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
 </project>
