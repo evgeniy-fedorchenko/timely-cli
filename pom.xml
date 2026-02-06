@@ -9,7 +9,7 @@
     <version>1.0-SNAPSHOT</version>
 
     <name>Timely CLI</name>
-    <description>Консольный тайм-трекер</description>
+    <description>Console time-tracker</description>
 
     <properties>
         <java.version>25</java.version>
@@ -83,11 +83,14 @@
                         <manifest>
                             <mainClass>com.efedorchenko.timely.Main</mainClass>
                         </manifest>
+                        <manifestEntries>
+                            <Implementation-Version>${project.version}</Implementation-Version>
+                        </manifestEntries>
                     </archive>
                 </configuration>
             </plugin>
 
-            <!-- Запуск тестов. Maven использует его по умолчанию. Без указания плагина по
+            <!-- Запуск тестов. Maven использует его по умолчанию. Без указания плагина, по
                  умолчанию подтягивается старая версия, а для JUnit 5 лучше указать свежую -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -95,6 +98,15 @@
                 <version>3.5.4</version>
             </plugin>
         </plugins>
+
+        <resources>
+            <!-- Включаем парсинг application.properties из src/main/resources.
+                 Они и так прочитаются, но плейсхолдеры не смогут подставиться -->
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
     </build>
 
 </project>
