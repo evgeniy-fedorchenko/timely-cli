@@ -72,22 +72,36 @@
                 </configuration>
             </plugin>
 
-            <!-- Прописывает Main в MANIFEST.MF, чтобы писать 'java -jar timely.jar [command]'
-                 вместо 'java -cp timely.jar com.efedorchenko.timely.Main [command]' -->
+            <!-- Собирает fat JAR со всеми зависимостями внутри (picocli).
+                 Без этого java -jar не работает — ClassNotFoundException на picocli -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>3.5.0</version>
-                <configuration>
-                    <archive>
-                        <manifest>
-                            <mainClass>com.efedorchenko.timely.Main</mainClass>
-                        </manifest>
-                        <manifestEntries>
-                            <Implementation-Version>${project.version}</Implementation-Version>
-                        </manifestEntries>
-                    </archive>
-                </configuration>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.6.1</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <filters>
+                                <filter>
+                                    <artifact>*:*</artifact>
+                                    <excludes>
+                                        <exclude>META-INF/MANIFEST.MF</exclude>
+                                    </excludes>
+                                </filter>
+                            </filters>
+                            <transformers>
+                                <transformer
+                                        implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <mainClass>com.efedorchenko.timely.Main</mainClass>
+                                </transformer>
+                            </transformers>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
 
             <!-- Запуск тестов. Maven использует его по умолчанию. Без указания плагина, по
