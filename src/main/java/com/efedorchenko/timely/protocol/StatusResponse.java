@@ -4,5 +4,4 @@ public record StatusResponse(
         long currentSec,
         long totalSec,
         boolean running
-//        String project
 ) { }

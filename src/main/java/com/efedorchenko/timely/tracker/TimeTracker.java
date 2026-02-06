@@ -10,7 +10,6 @@ import java.util.Optional;
 public interface TimeTracker {
 
     TimeSession.Active start();
-//    TimeSession.Active start(String project);
     TimeSession.Completed stop();
 
 //    Optional<TimeSession.Active> currentSession();

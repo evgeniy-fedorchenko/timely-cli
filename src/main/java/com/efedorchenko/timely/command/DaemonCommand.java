@@ -3,7 +3,6 @@ package com.efedorchenko.timely.command;
 import com.efedorchenko.timely.daemon.DaemonServer;
 import com.efedorchenko.timely.tracker.Tracker;
 import picocli.CommandLine.Command;
-import picocli.CommandLine.Option;
 
 import java.io.IOException;
 

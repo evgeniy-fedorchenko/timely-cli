@@ -9,13 +9,11 @@ import java.util.Objects;
  */
 public sealed interface TimeSession permits TimeSession.Active, TimeSession.Completed {
 
-//    String project();
     Instant startTime();
 
-    record Active(/*String project,*/ Instant startTime) implements TimeSession {
+    record Active(Instant startTime) implements TimeSession {
 
         public Active {
-//            Objects.requireNonNull(project);
             Objects.requireNonNull(startTime);
         }
 
@@ -24,14 +22,13 @@ public sealed interface TimeSession permits TimeSession.Active, TimeSession.Comp
         }
 
         public Completed complete(Instant endTime) {
-            return new Completed(/*project, */startTime, endTime);
+            return new Completed(startTime, endTime);
         }
     }
 
-    record Completed(/*String project, */Instant startTime, Instant endTime) implements TimeSession {
+    record Completed(Instant startTime, Instant endTime) implements TimeSession {
 
         public Completed {
-//            Objects.requireNonNull(project);
             Objects.requireNonNull(startTime);
             Objects.requireNonNull(endTime);
             if (endTime.isBefore(startTime)) {

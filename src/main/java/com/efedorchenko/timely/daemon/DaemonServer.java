@@ -9,11 +9,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.time.LocalTime;
-import java.time.temporal.ChronoUnit;
 import java.util.Objects;
-
-import static java.lang.IO.println;
 
 /**
  * TCP-сервер daemon-процесса.
@@ -112,12 +108,10 @@ public final class DaemonServer {
         };
     }
 
-    private String handleStart(/*String command*/) {
+    private String handleStart() {
         try {
-//            var project = Protocol.parseProject(command);
-//            var session = (project != null) ? tracker.start(project) : tracker.start();
             tracker.start();
-            return Protocol.RESP_OK/* + " " + session.project()*/;
+            return Protocol.RESP_OK;
         } catch (IllegalStateException e) {
             return Protocol.error(e.getMessage());
         }
@@ -139,7 +133,6 @@ public final class DaemonServer {
                 status.currentSessionTime().toSeconds(),
                 status.totalTime().toSeconds(),
                 status.isRunning()
-//                status.projectName()
         );
     }
 

@@ -31,7 +31,6 @@ public final class Tracker implements TimeTracker {
 
     @Override
     public TimeSession.Active start() {
-//        return start(DEFAULT_PROJECT);
 
         if (currentSession != null) {
             throw new IllegalStateException("Timer already running. Stop it first.");
@@ -40,22 +39,6 @@ public final class Tracker implements TimeTracker {
         currentSession = new TimeSession.Active(clock.instant());
         return currentSession;
     }
-
-//    @Override
-//    public TimeSession.Active start(String project) {
-//        if (project == null || project.isBlank()) {
-//            project = DEFAULT_PROJECT;
-//        }
-//
-//        if (currentSession != null) {
-//            throw new IllegalStateException(
-//                    "Timer already running: " + currentSession.project() + ". Stop it first.");
-//                    "Timer already running. Stop it first.");
-//        }
-//
-//        currentSession = new TimeSession.Active(project, clock.instant());
-//        return currentSession;
-//    }
 
     @Override
     public TimeSession.Completed stop() {

@@ -26,15 +26,6 @@ public final class Protocol {
 
     private Protocol() {}
 
-    /** Извлекает проект из "start learning java" → "learning java". */
-//    public static String parseProject(String command) {
-//        if (command == null || !command.startsWith(CMD_START)) {
-//            return null;
-//        }
-//        var rest = command.substring(CMD_START.length()).trim();
-//        return rest.isEmpty() ? null : rest;
-//    }
-
     /** Первое слово команды. */
     public static String commandType(String command) {
         if (command == null || command.isBlank()) return "";
@@ -47,16 +38,13 @@ public final class Protocol {
     }
 
     /** Формат: "OK currentSec totalSec isRunning" */
-    public static String statusResponse(long currentSec, long totalSec, boolean running/*, String project*/) {
-        var sb = new StringBuilder()
+    public static String statusResponse(long currentSec, long totalSec, boolean running) {
+        return new StringBuilder()
                 .append(RESP_OK)
                 .append(" ").append(currentSec)
                 .append(" ").append(totalSec)
-                .append(" ").append(running);
-//        if (project != null) {
-//            sb.append(" ").append(project);
-//        }
-        return sb.toString();
+                .append(" ").append(running)
+                .toString();
     }
 
     public static String bye(String summary) {
@@ -92,7 +80,6 @@ public final class Protocol {
                     Long.parseLong(parts[1]),
                     Long.parseLong(parts[2]),
                     Boolean.parseBoolean(parts[3])
-//                    parts.length > 4 ? parts[4] : null
             );
         } catch (NumberFormatException e) {
             return null;

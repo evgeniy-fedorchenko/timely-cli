@@ -13,8 +13,4 @@ public record StatusInfo(
     public boolean isRunning() {
         return currentSession != null;
     }
-
-//    public String projectName() {
-//        return currentSession != null ? currentSession.project() : null;
-//    }
 }

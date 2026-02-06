@@ -4,10 +4,8 @@ import com.efedorchenko.timely.client.DaemonClient;
 import com.efedorchenko.timely.client.ResponsePrinter;
 import com.efedorchenko.timely.protocol.Protocol;
 import picocli.CommandLine.Command;
-import picocli.CommandLine.Parameters;
 
 import java.io.IOException;
-import java.util.List;
 
 import static java.lang.IO.println;
 
@@ -17,9 +15,6 @@ import static java.lang.IO.println;
         description = "Start timer for a project"
 )
 public class StartCommand implements Runnable {
-
-//    @Parameters(description = "Project name (can have multiple words)", arity = "0..*")
-//    private List<String> projectWords;
 
     @Override
     public void run() {
@@ -33,8 +28,4 @@ public class StartCommand implements Runnable {
         }
     }
 
-//    private String createDaemonCommand() {
-//        var project = projectWords != null ? String.join(" ", projectWords) : null;
-//        return project != null ? Protocol.CMD_START + " " + project : Protocol.CMD_START;
-//    }
 }

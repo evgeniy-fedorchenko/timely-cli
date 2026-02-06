@@ -36,8 +36,7 @@ public final class ResponsePrinter {
             return;
         }
         if (status.running()) {
-//            var project = status.project() != null ? status.project() : "default";
-            println(/*project + ": " + */DurationFormatter.format(status.currentSec()) + " (running)");
+            println(DurationFormatter.format(status.currentSec()) + " (running)");
         }
 
         println("Total: " + DurationFormatter.format(status.totalSec()));
