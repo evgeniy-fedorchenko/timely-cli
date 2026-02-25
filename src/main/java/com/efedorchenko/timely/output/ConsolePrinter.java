@@ -1,6 +1,4 @@
-package com.efedorchenko.timely.client;
-
-import com.efedorchenko.timely.format.DurationFormatter;
+package com.efedorchenko.timely.output;
 
 import static java.lang.IO.println;
 

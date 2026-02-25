@@ -1,5 +1,7 @@
 package com.efedorchenko.timely.client;
 
+import com.efedorchenko.timely.output.ConsolePrinter;
+import com.efedorchenko.timely.output.Printer;
 import com.efedorchenko.timely.protocol.Protocol;
 
 import java.io.IOException;

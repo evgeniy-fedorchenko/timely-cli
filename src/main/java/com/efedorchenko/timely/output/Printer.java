@@ -1,4 +1,4 @@
-package com.efedorchenko.timely.client;
+package com.efedorchenko.timely.output;
 
 /**
  * Выводит результаты трекерных команд пользователю.

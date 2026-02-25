@@ -1,4 +1,4 @@
-package com.efedorchenko.timely.format;
+package com.efedorchenko.timely.output;
 
 import java.time.Duration;
 import java.util.Objects;
