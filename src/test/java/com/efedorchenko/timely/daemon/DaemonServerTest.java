@@ -2,6 +2,7 @@ package com.efedorchenko.timely.daemon;
 
 import com.efedorchenko.timely.client.DaemonClient;
 import com.efedorchenko.timely.protocol.Protocol;
+import com.efedorchenko.timely.protocol.ResponseDecoder;
 import com.efedorchenko.timely.testutil.MutableClock;
 import com.efedorchenko.timely.testutil.TestUtils;
 import com.efedorchenko.timely.tracker.Tracker;
@@ -85,8 +86,8 @@ class DaemonServerTest {
 
             var response = client.send(Protocol.CMD_START);
 
-            assertThat(Protocol.isError(response)).isTrue();
-            assertThat(Protocol.errorMessage(response)).contains("already running");
+            assertThat(ResponseDecoder.isError(response)).isTrue();
+            assertThat(ResponseDecoder.errorMessage(response)).contains("already running");
         }
     }
 
@@ -102,7 +103,7 @@ class DaemonServerTest {
 
             var response = client.send(Protocol.CMD_STOP);
 
-            assertThat(Protocol.isOk(response)).isTrue();
+            assertThat(ResponseDecoder.isOk(response)).isTrue();
             assertThat(response).isEqualTo("OK 300");
         }
 
@@ -111,8 +112,8 @@ class DaemonServerTest {
         void returnsErrorWhenNotRunning() throws IOException {
             var response = client.send(Protocol.CMD_STOP);
 
-            assertThat(Protocol.isError(response)).isTrue();
-            assertThat(Protocol.errorMessage(response)).contains("not running");
+            assertThat(ResponseDecoder.isError(response)).isTrue();
+            assertThat(ResponseDecoder.errorMessage(response)).contains("not running");
         }
     }
 
@@ -125,7 +126,7 @@ class DaemonServerTest {
         void idleStatus() throws IOException {
             var response = client.send(Protocol.CMD_STATUS);
 
-            var status = Protocol.parseStatus(response);
+            var status = ResponseDecoder.parseStatus(response);
             assertThat(status).isNotNull();
             assertThat(status.running()).isFalse();
             assertThat(status.currentSec()).isZero();
@@ -140,7 +141,7 @@ class DaemonServerTest {
 
             var response = client.send(Protocol.CMD_STATUS);
 
-            var status = Protocol.parseStatus(response);
+            var status = ResponseDecoder.parseStatus(response);
             assertThat(status).isNotNull();
             assertThat(status.running()).isTrue();
             assertThat(status.currentSec()).isEqualTo(90);
@@ -161,7 +162,7 @@ class DaemonServerTest {
 
             var response = client.send(Protocol.CMD_STATUS);
 
-            var status = Protocol.parseStatus(response);
+            var status = ResponseDecoder.parseStatus(response);
             assertThat(status.currentSec()).isEqualTo(30);
             assertThat(status.totalSec()).isEqualTo(90);
         }
@@ -180,7 +181,7 @@ class DaemonServerTest {
 
             var response = client.send(Protocol.CMD_SHUTDOWN);
 
-            assertThat(Protocol.isBye(response)).isTrue();
+            assertThat(ResponseDecoder.isBye(response)).isTrue();
             assertThat(response).isEqualTo("BYE 600");
         }
     }
@@ -194,8 +195,8 @@ class DaemonServerTest {
         void returnsError() throws IOException {
             var response = client.send("unknown");
 
-            assertThat(Protocol.isError(response)).isTrue();
-            assertThat(Protocol.errorMessage(response)).contains("Unknown command");
+            assertThat(ResponseDecoder.isError(response)).isTrue();
+            assertThat(ResponseDecoder.errorMessage(response)).contains("Unknown command");
         }
     }
 }

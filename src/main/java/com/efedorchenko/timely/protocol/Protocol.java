@@ -5,6 +5,9 @@ package com.efedorchenko.timely.protocol;
  *
  * Команды: ping, start, stop, status, shutdown
  * Ответы: timely, OK ..., ERROR ..., BYE ...
+ *
+ * Содержит только константы команд/ответов и разбор типа команды.
+ * Построение ответов - {@link ResponseEncoder}, разбор ответов - {@link ResponseDecoder}.
  */
 public final class Protocol {
 
@@ -26,58 +29,5 @@ public final class Protocol {
         if (command == null || command.isBlank()) return "";
         int space = command.indexOf(' ');
         return space < 0 ? command : command.substring(0, space);
-    }
-
-    public static String error(String message) {
-        return RESP_ERROR + " " + message;
-    }
-
-    /** Формат: "OK currentSec totalSec isRunning" */
-    public static String statusResponse(long currentSec, long totalSec, boolean running) {
-        return new StringBuilder()
-                .append(RESP_OK)
-                .append(" ").append(currentSec)
-                .append(" ").append(totalSec)
-                .append(" ").append(running)
-                .toString();
-    }
-
-    public static String bye(String summary) {
-        return RESP_BYE + " " + summary;
-    }
-
-    public static boolean isOk(String resp) {
-        return resp != null && resp.startsWith(RESP_OK);
-    }
-
-    public static boolean isError(String resp) {
-        return resp != null && resp.startsWith(RESP_ERROR);
-    }
-
-    public static boolean isBye(String resp) {
-        return resp != null && resp.startsWith(RESP_BYE);
-    }
-
-    public static String errorMessage(String resp) {
-        if (!isError(resp) || resp.length() <= RESP_ERROR.length() + 1) return "";
-        return resp.substring(RESP_ERROR.length() + 1);
-    }
-
-    /** Парсит ответ status. */
-    public static StatusResponse parseStatus(String resp) {
-        if (!isOk(resp)) return null;
-
-        var parts = resp.split(" ", 5);
-        if (parts.length < 4) return null;
-
-        try {
-            return new StatusResponse(
-                    Long.parseLong(parts[1]),
-                    Long.parseLong(parts[2]),
-                    Boolean.parseBoolean(parts[3])
-            );
-        } catch (NumberFormatException e) {
-            return null;
-        }
     }
 }

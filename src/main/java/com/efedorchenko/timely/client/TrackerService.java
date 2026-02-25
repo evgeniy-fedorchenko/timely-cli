@@ -3,14 +3,15 @@ package com.efedorchenko.timely.client;
 import com.efedorchenko.timely.output.ConsolePrinter;
 import com.efedorchenko.timely.output.Printer;
 import com.efedorchenko.timely.protocol.Protocol;
+import com.efedorchenko.timely.protocol.ResponseDecoder;
 
 import java.io.IOException;
 
 /**
  * Клиентский фасад для трекерных команд.
  *
- * Владеет {@link DaemonClient}, знает протокол, выполняет команды.
- * Парсинг ответов — здесь. Форматирование вывода — в {@link Printer}.
+ * Владеет {@link DaemonClient}, выполняет команды.
+ * Парсинг ответов — через {@link ResponseDecoder}. Форматирование вывода — в {@link Printer}.
  */
 public class TrackerService {
 
@@ -29,10 +30,10 @@ public class TrackerService {
     public void start() {
         try {
             var response = client.send(Protocol.CMD_START);
-            if (Protocol.isOk(response)) {
+            if (ResponseDecoder.isOk(response)) {
                 printer.printStarted();
             } else {
-                printer.printError(Protocol.errorMessage(response));
+                printer.printError(ResponseDecoder.errorMessage(response));
             }
         } catch (IOException e) {
             printer.printError(e.getMessage());
@@ -42,11 +43,10 @@ public class TrackerService {
     public void stop() {
         try {
             var response = client.send(Protocol.CMD_STOP);
-            if (Protocol.isOk(response)) {
-                var seconds = Long.parseLong(response.substring(Protocol.RESP_OK.length()).trim());
-                printer.printStopped(seconds);
+            if (ResponseDecoder.isOk(response)) {
+                printer.printStopped(ResponseDecoder.parseSeconds(response));
             } else {
-                printer.printError(Protocol.errorMessage(response));
+                printer.printError(ResponseDecoder.errorMessage(response));
             }
         } catch (IOException e) {
             printer.printError(e.getMessage());
@@ -56,7 +56,7 @@ public class TrackerService {
     public void status() {
         try {
             var response = client.send(Protocol.CMD_STATUS);
-            var status = Protocol.parseStatus(response);
+            var status = ResponseDecoder.parseStatus(response);
             if (status == null) {
                 printer.printError("Invalid response: " + response);
                 return;
@@ -70,11 +70,10 @@ public class TrackerService {
     public void shutdown() {
         try {
             var response = client.send(Protocol.CMD_SHUTDOWN);
-            if (Protocol.isBye(response)) {
-                var seconds = Long.parseLong(response.substring(Protocol.RESP_BYE.length()).trim());
-                printer.printShutdown(seconds);
+            if (ResponseDecoder.isBye(response)) {
+                printer.printShutdown(ResponseDecoder.parseSeconds(response));
             } else {
-                printer.printError(Protocol.errorMessage(response));
+                printer.printError(ResponseDecoder.errorMessage(response));
             }
         } catch (IOException e) {
             printer.printError(e.getMessage());

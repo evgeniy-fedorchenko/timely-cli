@@ -2,6 +2,7 @@ package com.efedorchenko.timely.daemon;
 
 import com.efedorchenko.timely.AppProperties;
 import com.efedorchenko.timely.protocol.Protocol;
+import com.efedorchenko.timely.protocol.ResponseEncoder;
 import com.efedorchenko.timely.tracker.TimeTracker;
 
 import java.io.BufferedReader;
@@ -100,37 +101,36 @@ public final class DaemonServer {
         var type = Protocol.commandType(command);
 
         return switch (type) {
-            case Protocol.CMD_PING -> Protocol.RESP_PONG;
+            case Protocol.CMD_PING -> ResponseEncoder.pong();
             case Protocol.CMD_START -> handleStart(/*command*/);
             case Protocol.CMD_STOP -> handleStop();
             case Protocol.CMD_STATUS -> handleStatus();
             case Protocol.CMD_SHUTDOWN -> handleShutdown();
-            default -> Protocol.error("Unknown command: " + type);
+            default -> ResponseEncoder.error("Unknown command: " + type);
         };
     }
 
     private String handleStart() {
         try {
             tracker.start();
-            return Protocol.RESP_OK;
+            return ResponseEncoder.ok();
         } catch (IllegalStateException e) {
-            return Protocol.error(e.getMessage());
+            return ResponseEncoder.error(e.getMessage());
         }
     }
 
     private String handleStop() {
         try {
             var session = tracker.stop();
-            // Отдаём секунды, форматирование на клиенте
-            return Protocol.RESP_OK + " " + session.duration().toSeconds();
+            return ResponseEncoder.okWithSeconds(session.duration().toSeconds());
         } catch (IllegalStateException e) {
-            return Protocol.error(e.getMessage());
+            return ResponseEncoder.error(e.getMessage());
         }
     }
 
     private String handleStatus() {
         var status = tracker.status();
-        return Protocol.statusResponse(
+        return ResponseEncoder.statusResponse(
                 status.currentSessionTime().toSeconds(),
                 status.totalTime().toSeconds(),
                 status.isRunning()
@@ -140,7 +140,7 @@ public final class DaemonServer {
     private String handleShutdown() {
         var totalSec = tracker.totalTime().toSeconds();
         shutdownAfterCurrentRequest = true;
-        return Protocol.bye(String.valueOf(totalSec));
+        return ResponseEncoder.bye(totalSec);
     }
 
     private void log(String message) {
