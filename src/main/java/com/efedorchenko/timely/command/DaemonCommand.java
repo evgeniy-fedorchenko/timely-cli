@@ -68,7 +68,12 @@ public class DaemonCommand implements Runnable {
         }
     }
 
-    /** Форкает процесс с --foreground и отдаёт терминал пользователю */
+    /**
+     * Форкает процесс с --foreground и отдаёт терминал пользователю.
+     * <p>
+     * Печать напрямую в stderr - намеренно: это инфраструктурный код запуска процесса,
+     * не трекерная операция, так что принтер не подходит. Когда появится нормальный логгер - использовать его.
+     */
     private void runBackground() {
         try {
             var executable = ProcessHandle.current().info().command().orElse("timely");
@@ -84,12 +89,12 @@ public class DaemonCommand implements Runnable {
             if (client.isDaemonRunning()) {
                 println("Daemon started");
             } else {
-                println("ERROR: Daemon failed to start");
+                System.err.println("ERROR: Daemon failed to start");
             }
         } catch (InterruptedException _) {
             Thread.currentThread().interrupt();
         } catch (Exception e) {
-            println("ERROR: " + e.getMessage());
+            System.err.println("ERROR: " + e.getMessage());
         }
     }
 }

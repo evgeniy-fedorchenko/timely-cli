@@ -17,7 +17,8 @@ public final class DevDaemon {
             try {
                 daemon.start();
             } catch (IOException e) {
-                println("ERROR: " + e.getMessage());
+                // Печать напрямую в stderr - намеренно: dev-утилита, логгер/принтер здесь избыточен
+                System.err.println("ERROR: " + e.getMessage());
             }
         });
 

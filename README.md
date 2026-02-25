@@ -97,9 +97,11 @@ src/main/java/com/efedorchenko/timely/
  ├── VersionProvider         # Настройка версии проекта для picocli
  │ 
  ├── client
- │    ├── DaemonClient       # TCP-клиент
+ │    ├── DaemonClient               # TCP-клиент
  │    ├── DaemonNotRunningException
- │    └── ResponsePrinter    # Форматирование вывода
+ │    ├── TrackerService             # Фасад: протокол + парсинг ответов
+ │    ├── Printer                    # Интерфейс вывода результатов
+ │    └── ConsolePrinter             # Реализация: печать в stdout
  │ 
  ├── command                 # Picocli-команды     
  │    ├── DaemonCommand      # timely daemon       
