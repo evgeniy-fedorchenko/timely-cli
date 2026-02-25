@@ -5,7 +5,38 @@ import com.efedorchenko.timely.daemon.DevDaemon;
 import picocli.CommandLine;
 
 /**
- * Точка входа. Делегирует всё picocli
+ * Точка входа. Делегирует всё picocli.
+ *
+ * <h2>Рекомендуемый способ запуска</h2>
+ * Запуск native-сборки проще, чем из IDE, и передаёт весь смысл использования.
+ * Готовые бинарники в каталоге {@code artifact/}:
+ * <ol>
+ *     <li>{@code artifact/v2.0/timely daemon} - старт демона</li>
+ *     <li>{@code artifact/v2.0/timely start/stop/status} - работа с приложением</li>
+ *     <li>{@code artifact/v2.0/timely shutdown} - завершение демона</li>
+ * </ol>
+ *
+ * <h2>Запуск в продакшене</h2>
+ * Рассчитан на native-image: {@code timely daemon} форкает себя через {@link ProcessBuilder},
+ * не имея зависимости от среды
+ * <pre>
+ *   timely daemon     # запускает фоновый процесс
+ *   timely start      # отправляет TCP-команду daemon'у и завершается
+ *   timely stop
+ *   timely status
+ *   timely shutdown   # останавливает daemon
+ * </pre>
+ *
+ * <h2>Запуск из IDE</h2>
+ * Используйте run-конфигурации из {@code .run/}:
+ * <ol>
+ *   <li>Запустите <b>dev-daemon</b>, это - поднимает daemon в виртуальном потоке, в блокирующем режиме</li>
+ *   <li>Запускайте run-конфиги <b>run-start/run-stop/run-status</b> по очереди</li>
+ *   <li>Для остановки - <b>run-shutdown</b> или Stop на <b>dev-daemon</b></li>
+ * </ol>
+ * Но сразу скажу, что это неудобно, лучше используйте рекомендуемый способ
+ *
+ * @apiNote Флаг {@code --dev} не является частью продового API.
  */
 @CommandLine.Command(
         name = "timely",

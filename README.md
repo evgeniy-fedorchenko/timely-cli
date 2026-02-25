@@ -1,31 +1,49 @@
-# README.md
-
 # Timely CLI
 
 Консольный тайм-трекер. Запускаешь таймер, работаешь, останавливаешь — видишь сколько времени потратил.
 
 ## Быстрый старт
 
-```
-# Собрать native image (нужен GraalVM)
-mvn clean package -Pnative
+Приложение рассчитано на запуск как **native-image**. Готовые бинарники есть в артефактах релиза.
 
+```bash
 # Запустить daemon в фоне
-./target/timely daemon
+artifact/v{version}/timely daemon
 
 # Работаем
-./target/timely start
-./target/timely status
-./target/timely stop
+artifact/v{version}/timely start
+artifact/v{version}/timely status
+artifact/v{version}/timely stop
 
 # Остановить daemon
-./target/timely shutdown
+artifact/v{version}/timely shutdown
 ```
 
 Для удобства можно добавить симлинк:
+```bash
+sudo ln -s $(pwd)/timely /usr/local/bin/timely
 ```
-sudo ln -s $(pwd)/target/timely /usr/local/bin/timely
+
+> **Примечание:** команда `timely daemon` форкает процесс через `ProcessBuilder` и работает
+> только с нативным бинарником. С JAR совместимость убрана (для упрощения).
+
+### Сборка из исходников
+
+```bash
+# Native image (нужен GraalVM 25+)
+mvn clean package -Pnative
+
+# Обычный JAR (только для тестов, daemon не работает)
+mvn clean package
 ```
+
+### Запуск из IDEA
+
+Используйте run-конфигурации из `.run/`:
+
+1. Запустите **dev-daemon** и оставьте работать — поднимает daemon в виртуальном потоке.
+2. Запускайте **run-start**, **run-stop**, **run-status** по очереди — каждый подключается к daemon по TCP и сразу завершается, как в проде.
+3. Для остановки — **run-shutdown** или Stop на **dev-daemon**.
 
 ## Архитектура
 
@@ -53,30 +71,22 @@ Daemon запускается командой `timely daemon`:
 3. Основной процесс проверяет что daemon поднялся и завершается
 4. Терминал свободен
 
-### Dev-режим
+### Запуск из IDEA (dev-режим)
 
 ```
-┌──────────────────────────────────────────────┐
-│              timely --dev                    │
-│  ┌─────────────────┐    ┌─────────────────┐  │
-│  │  InteractiveCli │───>│  DaemonServer   │  │
-│  │                 │TCP │  (virtual       │  │
-│  │  > start        │    │   thread)       │  │
-│  │  > status       │    │                 │  │
-│  │  > exit         │    │  Tracker        │  │
-│  └─────────────────┘    └─────────────────┘  │
-└──────────────────────────────────────────────┘
-              Один процесс
+┌─────────────────────────────────────────────────────────┐
+│  dev-daemon (timely --dev)                              │
+│  ┌──────────────────────────────────────────────────┐   │
+│  │  DevDaemon.start()  →  DaemonServer (v-thread)   │   │
+│  └──────────────────────────────────────────────────┘   │
+│  main-поток припаркован, процесс живёт                  │
+└─────────────────────────────────────────────────────────┘
+                         ↑ TCP :52713
+┌──────────────────┐  ┌─────────────────┐  ┌──────────────┐
+│  run-start       │  │  run-stop       │  │  run-status  │
+│  (завершается)   │  │  (завершается)  │  │ (завершается)│
+└──────────────────┘  └─────────────────┘  └──────────────┘
 ```
-
-Всё в одном процессе для удобства разработки:
-- Daemon запускается в виртуальном потоке
-- CLI читает команды из stdin
-- При `exit` останавливает daemon и завершается
-
-Запуск из IDEA: конфигурация `.run/dev-all.run.xml`.
-При открытии файла IDEA сама предложит создать из него run-конфигурацию, после чего ее можно сразу запустить.
-Этот конфиг запускает приложение в режиме dev (требуется java 25)
 
 ## Структура проекта
 ```
@@ -89,8 +99,7 @@ src/main/java/com/efedorchenko/timely/
  ├── client
  │    ├── DaemonClient       # TCP-клиент
  │    ├── DaemonNotRunningException
- │    ├── InteractiveCli     # Dev-режим REPL   
- │    └── ResponsePrinter    # Форматирование вывода 
+ │    └── ResponsePrinter    # Форматирование вывода
  │ 
  ├── command                 # Picocli-команды     
  │    ├── DaemonCommand      # timely daemon       
@@ -100,7 +109,8 @@ src/main/java/com/efedorchenko/timely/
  │    └── StopCommand        # timely shutdown     
  │ 
  ├── daemon
- │    └── DaemonServer       # TCP-сервер, обработка команд  
+ │    ├── DaemonServer       # TCP-сервер, обработка команд
+ │    └── DevDaemon          # Запуск daemon в виртуальном потоке (только для IDEA)
  │ 
  ├── format
  │    └── DurationFormatter  # Форматтер, "1h 2min 3sec"
@@ -156,7 +166,7 @@ mvn clean package -Pnative
 ## Тестирование версии 1.0
 
 Покрыта бизнес-логика (Tracker, Protocol, DurationFormatter) и интеграция клиент-сервер (DaemonServer, DaemonClient).
-Не покрыты dev-инструменты (InteractiveCli) и тонкие обёртки (Commands) — осознанно, см. комментарии в коде.
+Не покрыты тонкие обёртки (Commands, DevDaemon) — осознанно, см. комментарии в коде.
 ![Coverage](docs/coverage.png)
 ```bash
 # Для замера покрытия
