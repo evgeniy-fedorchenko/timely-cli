@@ -34,10 +34,7 @@ import static java.lang.IO.println;
  * Флаг --foreground скрыт от пользователя, используется только
  * для запуска сервера в фоновом процессе.
  *
- * В dev-режиме (timely --dev) эта команда не используется -
- * там InteractiveCli сам запускает daemon в виртуальном потоке.
- *
- * Не покрыт unit-тестами — зависит от ProcessBuilder и fork процесса.
+ * Не покрыт unit-тестами - зависит от ProcessBuilder и fork процесса.
  * Компоненты (DaemonServer, DaemonClient, Tracker) протестированы отдельно.
  * Да и просто ProcessBuilder, ShutdownHook и тд тестить - быстрее с ума сойти
  */

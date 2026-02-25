@@ -1,7 +1,7 @@
 package com.efedorchenko.timely;
 
-import com.efedorchenko.timely.client.InteractiveCli;
 import com.efedorchenko.timely.command.*;
+import com.efedorchenko.timely.daemon.DevDaemon;
 import picocli.CommandLine;
 
 /**
@@ -22,9 +22,8 @@ import picocli.CommandLine;
 )
 public class Main implements Runnable {
 
-    @CommandLine.Option(names = "--dev", description = "Interactive CLI mode")
+    @CommandLine.Option(names = "--dev", description = "Start daemon in-process (for IDE use only)", hidden = true)
     private boolean devMode;
-
 
     static void main(String[] args) {
         int exitCode = new CommandLine(new Main()).execute(args);
@@ -34,7 +33,7 @@ public class Main implements Runnable {
     @Override
     public void run() {
         if (devMode) {
-            new InteractiveCli().run();
+            DevDaemon.start();
         } else {
             CommandLine.usage(this, System.out);
         }
