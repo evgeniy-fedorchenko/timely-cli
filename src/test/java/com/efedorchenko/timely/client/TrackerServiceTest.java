@@ -1,6 +1,7 @@
 package com.efedorchenko.timely.client;
 
 import com.efedorchenko.timely.output.Printer;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -14,15 +15,23 @@ import static org.mockito.Mockito.*;
 
 class TrackerServiceTest {
 
-    @Mock DaemonClient client;
-    @Mock Printer printer;
+    @Mock
+    DaemonClient client;
+    @Mock
+    Printer printer;
 
     private TrackerService service;
+    private AutoCloseable mocks;
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this);
+        mocks = MockitoAnnotations.openMocks(this);
         service = new TrackerService(client, printer);
+    }
+
+    @AfterEach
+    void tearDown() throws Exception {
+        mocks.close();
     }
 
     @Nested

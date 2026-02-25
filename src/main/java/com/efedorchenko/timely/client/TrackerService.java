@@ -8,7 +8,7 @@ import java.io.IOException;
 
 /**
  * Клиентский фасад для трекерных команд.
- *
+ * <p>
  * Владеет {@link DaemonClient}, выполняет команды.
  * Парсинг ответов — через {@link ResponseDecoder}. Форматирование вывода — в {@link Printer}.
  */

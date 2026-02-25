@@ -13,7 +13,7 @@ import static java.lang.IO.println;
 
 /**
  * Запуск daemon в prod-режиме.
- *
+ * <p>
  * Как это работает:
  * {@code timely demon} запускает {@link #runBackground()}, который запускает {@code timely demon --foreground},
  * ждем пока в фоновом процессе запустится настоящий демон и завершается. Демон продолжает работать в процессе,
@@ -33,7 +33,7 @@ import static java.lang.IO.println;
  *
  * Флаг --foreground скрыт от пользователя, используется только
  * для запуска сервера в фоновом процессе.
- *
+ * <p>
  * Не покрыт unit-тестами - зависит от ProcessBuilder и fork процесса.
  * Компоненты (DaemonServer, DaemonClient, Tracker) протестированы отдельно.
  * Да и просто ProcessBuilder, ShutdownHook и тд тестить - быстрее с ума сойти

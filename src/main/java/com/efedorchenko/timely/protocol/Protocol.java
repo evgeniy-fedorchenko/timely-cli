@@ -2,10 +2,10 @@ package com.efedorchenko.timely.protocol;
 
 /**
  * Протокол CLI ↔ Daemon. Текстовый, одна строка = одно сообщение.
- *
+ * <p>
  * Команды: ping, start, stop, status, shutdown
  * Ответы: timely, OK ..., ERROR ..., BYE ...
- *
+ * <p>
  * Содержит только константы команд/ответов и разбор типа команды.
  * Построение ответов - {@link ResponseEncoder}, разбор ответов - {@link ResponseDecoder}.
  */

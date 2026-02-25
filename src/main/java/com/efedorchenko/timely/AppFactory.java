@@ -10,7 +10,7 @@ import picocli.CommandLine.IFactory;
 
 /**
  * Фабрика для picocli: собирает граф зависимостей в одном месте.
- *
+ * <p>
  * picocli вызывает {@link #create(Class)} для создания субкоманд.
  * Команды получают готовый {@link TrackerService}, а не создают зависимости сами.
  * Всё остальное (help, version provider и т.д.) делегируется стандартной фабрике.

@@ -50,7 +50,7 @@ public final class AppProperties {
         int value;
         try {
             value = Integer.parseInt(raw.strip());
-        } catch (NumberFormatException e) {
+        } catch (NumberFormatException _) {
             throw new ExceptionInInitializerError("Property " + key + " must be an integer, got: " + raw);
         }
         if (min != null && value < min) {

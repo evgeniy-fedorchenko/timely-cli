@@ -37,7 +37,7 @@ class DaemonServerTest {
         serverThread = new Thread(() -> {
             try {
                 server.start();
-            } catch (IOException e) {
+            } catch (IOException _) {
                 // Сервер остановлен - ок
             }
         });

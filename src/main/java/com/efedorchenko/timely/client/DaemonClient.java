@@ -13,7 +13,7 @@ import java.net.Socket;
 
 /**
  * Клиент для общения с daemon.
- *
+ * <p>
  * Каждый вызов {@link #send} открывает новое соединение,
  * отправляет команду, читает ответ и закрывает соединение.
  */
@@ -54,7 +54,7 @@ public final class DaemonClient {
                 }
                 return response;
             }
-        } catch (ConnectException e) {
+        } catch (ConnectException _) {
             throw new DaemonNotRunningException();
         }
     }
@@ -64,7 +64,7 @@ public final class DaemonClient {
         try {
             String answer = send(Protocol.CMD_PING);
             return Protocol.RESP_PONG.equals(answer);
-        } catch (IOException e) {
+        } catch (IOException _) {
             return false;
         }
     }

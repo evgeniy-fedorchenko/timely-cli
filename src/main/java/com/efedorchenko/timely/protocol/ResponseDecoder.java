@@ -38,7 +38,7 @@ public final class ResponseDecoder {
                     Long.parseLong(parts[2]),
                     Boolean.parseBoolean(parts[3])
             );
-        } catch (NumberFormatException e) {
+        } catch (NumberFormatException _) {
             return null;
         }
     }
