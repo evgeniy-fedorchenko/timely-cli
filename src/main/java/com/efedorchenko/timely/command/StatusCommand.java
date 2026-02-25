@@ -5,21 +5,17 @@ import picocli.CommandLine.Command;
 
 
 @Command(
-        name = "status",
+        name = StatusCommand.NAME,
         description = StatusCommand.DESCRIPTION
 )
 public class StatusCommand implements Runnable {
 
+    public static final String NAME = "status";
     public static final String DESCRIPTION = "Show current session and total tracked time";
 
     private final TrackerService service;
 
-    public StatusCommand() {
-        this(new TrackerService());
-    }
-
-    /** Для переопределения, например в тестах */
-    StatusCommand(TrackerService service) {
+    public StatusCommand(TrackerService service) {
         this.service = service;
     }
 

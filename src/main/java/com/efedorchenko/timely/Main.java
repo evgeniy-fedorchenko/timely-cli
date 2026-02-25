@@ -3,6 +3,8 @@ package com.efedorchenko.timely;
 import com.efedorchenko.timely.command.*;
 import com.efedorchenko.timely.daemon.DevDaemon;
 import picocli.CommandLine;
+import picocli.CommandLine.Command;
+import picocli.CommandLine.Option;
 
 /**
  * Точка входа. Делегирует всё picocli.
@@ -38,7 +40,7 @@ import picocli.CommandLine;
  *
  * @apiNote Флаг {@code --dev} не является частью продового API.
  */
-@CommandLine.Command(
+@Command(
         name = "timely",
         description = "Console time tracker",
         mixinStandardHelpOptions = true,  // Авто --help и --version
@@ -53,17 +55,19 @@ import picocli.CommandLine;
 )
 public class Main implements Runnable {
 
-    @CommandLine.Option(names = "--dev", description = "Start daemon in-process (for IDE use only)", hidden = true)
+    @Option(names = "--dev", description = "Start daemon in-process (for IDE use only)", hidden = true)
     private boolean devMode;
 
     static void main(String[] args) {
-        int exitCode = new CommandLine(new Main()).execute(args);
+        int exitCode = new CommandLine(new Main(), new AppFactory()).execute(args);
         System.exit(exitCode);
     }
 
     @Override
     public void run() {
         if (devMode) {
+//            dev-режим просто запускает deamon-сервер. В этом была основная сложность поддержки dev-режима. Сейчас
+//            ответственность dev-режима минимальна. Команды он принимает от приложения, работающего в обычном режиме
             DevDaemon.start();
         } else {
             CommandLine.usage(this, System.out);

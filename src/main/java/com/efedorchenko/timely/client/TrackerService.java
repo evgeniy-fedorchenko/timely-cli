@@ -1,6 +1,5 @@
 package com.efedorchenko.timely.client;
 
-import com.efedorchenko.timely.output.ConsolePrinter;
 import com.efedorchenko.timely.output.Printer;
 import com.efedorchenko.timely.protocol.Protocol;
 import com.efedorchenko.timely.protocol.ResponseDecoder;
@@ -18,11 +17,7 @@ public class TrackerService {
     private final DaemonClient client;
     private final Printer printer;
 
-    public TrackerService() {
-        this(new DaemonClient(), new ConsolePrinter());
-    }
-
-    TrackerService(DaemonClient client, Printer printer) {
+    public TrackerService(DaemonClient client, Printer printer) {
         this.client = client;
         this.printer = printer;
     }
