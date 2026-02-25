@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-    <configuration default="false" name="all-dev" type="Application" factoryName="Application">
+    <configuration default="false" name="dev-daemon" type="Application" factoryName="Application">
         <option name="MAIN_CLASS_NAME" value="com.efedorchenko.timely.Main" />
         <module name="timely-cli" />
         <option name="PROGRAM_PARAMETERS" value="--dev" />
