@@ -93,7 +93,7 @@ Daemon запускается командой `timely daemon`:
 
 src/main/java/com/efedorchenko/timely/
  ├── Main                    # Точка входа, picocli
- ├── AppProperties           # Версия из app.properties
+ ├── AppProperties           # Конфигурация из application.properties (версия, daemon host/port, таймауты)
  ├── VersionProvider         # Настройка версии проекта для picocli
  │ 
  ├── client
