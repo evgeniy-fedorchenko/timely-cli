@@ -1,5 +1,6 @@
 package com.efedorchenko.timely.daemon;
 
+import com.efedorchenko.timely.AppProperties;
 import com.efedorchenko.timely.protocol.Protocol;
 import com.efedorchenko.timely.tracker.TimeTracker;
 
@@ -29,7 +30,7 @@ public final class DaemonServer {
     private ServerSocket serverSocket;
 
     public DaemonServer(TimeTracker tracker) {
-        this(tracker, Protocol.DAEMON_PORT);
+        this(tracker, AppProperties.daemonPort());
     }
 
     public DaemonServer(TimeTracker tracker, int port) {

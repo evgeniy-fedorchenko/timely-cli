@@ -1,5 +1,6 @@
 package com.efedorchenko.timely.client;
 
+import com.efedorchenko.timely.AppProperties;
 import com.efedorchenko.timely.protocol.Protocol;
 
 import java.io.BufferedReader;
@@ -22,7 +23,7 @@ public final class DaemonClient {
     private final int port;
 
     public DaemonClient() {
-        this(Protocol.DAEMON_HOST, Protocol.DAEMON_PORT);
+        this(AppProperties.daemonHost(), AppProperties.daemonPort());
     }
 
     public DaemonClient(String host, int port) {
@@ -39,8 +40,8 @@ public final class DaemonClient {
      */
     public String send(String command) throws IOException {
         try (var socket = new Socket()) {
-            socket.connect(new InetSocketAddress(host, port), Protocol.CONNECT_TIMEOUT_MS);
-            socket.setSoTimeout(Protocol.READ_TIMEOUT_MS);
+            socket.connect(new InetSocketAddress(host, port), AppProperties.connectTimeoutMs());
+            socket.setSoTimeout(AppProperties.readTimeoutMs());
 
             try (var writer = new PrintWriter(socket.getOutputStream(), true);
                  var reader = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {

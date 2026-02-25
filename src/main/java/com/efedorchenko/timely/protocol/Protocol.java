@@ -8,11 +8,6 @@ package com.efedorchenko.timely.protocol;
  */
 public final class Protocol {
 
-    public static final int DAEMON_PORT = 52713;
-    public static final String DAEMON_HOST = "localhost";
-    public static final int CONNECT_TIMEOUT_MS = 1000;
-    public static final int READ_TIMEOUT_MS = 5000;
-
     public static final String CMD_PING = "ping";
     public static final String CMD_START = "start";
     public static final String CMD_STOP = "stop";
